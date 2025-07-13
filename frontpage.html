@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zenith Brain Institution</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background-color: #2f2f2f;
+      color: #FFC107;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 40px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-left img {
+      width: 50px;
+    }
+
+    .header-left h1 {
+      font-size: 1.8em;
+      margin: 0;
+      font-weight: 700;
+      color: #FFC107;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-buttons button {
+      background: transparent;
+      border: 2px solid #FFC107;
+      color: #FFC107;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .header-buttons button:hover {
+      background-color: #FFC107;
+      color: #2f2f2f;
+    }
+
+    main {
+      padding: 50px 30px;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    main h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    main p {
+      font-size: 1.2em;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    footer {
+      background-color: #1f1f1f;
+      color: #ccc;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9em;
+    }
+
+    /* Slide Down Contact Panel */
+    .popup-panel {
+      position: fixed;
+      top: -100%;
+      right: 20px;
+      width: 320px;
+      background: #2f2f2f;
+      color: white;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      z-index: 3000;
+      transition: top 0.4s ease-in-out;
+    }
+
+    .popup-panel.active {
+      top: 70px;
+    }
+
+    .popup-box {
+      padding: 25px 20px;
+      position: relative;
+    }
+
+    .popup-box h2 {
+      margin-top: 0;
+      font-size: 1.4em;
+      color: #ffffff;
+    }
+
+    .popup-box p {
+      font-size: 1em;
+      line-height: 1.5;
+      margin: 10px 0;
+      color: #ffffff;
+    }
+
+    /* Blue link style for contact info */
+    .popup-box a {
+      color: #2196F3; /* Blue */
+      text-decoration: none;
+    }
+
+    .popup-box a:hover {
+      text-decoration: underline;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .popup-panel {
+        width: 100%;
+        right: 0;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <img src="Logo.jpg" alt="Zenith Brain Institution Logo" />
+      <h1>Zenith Brain Institution</h1>
+    </div>
+    <div class="header-buttons">
+      <button onclick="alert('Login functionality not implemented yet')">Login</button>
+      <button onclick="alert('Admission functionality not implemented yet')">Admission</button>
+      <button onclick="openPopup()">Contact</button>
+    </div>
+  </header>
+
+  <main>
+    <h2>Welcome to Zenith Brain Institution</h2>
+    <p>
+      At Zenith Brain Institution, we are dedicated to providing world-class education and fostering innovative thinking.
+      Join us to explore diverse programs and shape your future with expert guidance and cutting-edge facilities.
+    </p>
+  </main>
+
+  <footer>
+    &copy; 2025 Zenith Brain Institution. All rights reserved.
+  </footer>
+
+  <!-- Contact Panel -->
+  <div class="popup-panel" id="popup">
+    <div class="popup-box">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <h2>Contact Us</h2>
+      <p><strong>📧 Email:</strong> <a href="mailto:contact@zenithbrain.edu">contact@zenithbrain.edu</a></p>
+      <p><strong>📞 Phone:</strong> <a href="tel:+919876543210">+91-9876543210</a></p>
+      <p><strong>📍 Address:</strong><br>
+        Zenith Brain Institution,<br>
+        123 Knowledge Park, Innovation City,<br>
+        Tamil Nadu - 600001, India<br>
+        <a href="https://www.google.com/maps?q=123+Knowledge+Park+Tamil+Nadu+600001" target="_blank">View on Google Maps</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    function openPopup() {
+      document.getElementById("popup").classList.add("active");
+    }
+
+    function closePopup() {
+      document.getElementById("popup").classList.remove("active");
+    }
+
+    window.addEventListener('click', function (e) {
+      const popup = document.getElementById('popup');
+      const isButton = e.target.closest('button');
+      if (!popup.contains(e.target) && !isButton) {
+        closePopup();
+      }
+    });
+  </script>
+</body>
+</html>
