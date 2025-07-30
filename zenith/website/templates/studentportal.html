@@ -1,0 +1,641 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% if role == 'tutor' %}Tutor Portal{% else %}Student Portal{% endif %}</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'website/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'website/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'website/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static 'website/site.webmanifest' %}">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .top-bar { 
+      background-color: #FFC107;
+      color: #000; 
+      padding: 16px 24px; 
+      font-size: 22px; 
+      font-weight: bold; 
+      }
+    .container {
+      display: flex;
+      height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 200px;
+      background-color:#f0f2f5;
+      padding-top: 20px;
+      border-right: 1px solid #ccc;
+      border-left: 0px solid black;
+      border-bottom: 0px solid black;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #333;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.2s;
+      border-bottom: 0px solid black;
+    }
+    .sidebar a:hover {
+      background-color: #ffe082;
+      color: #000;
+    }
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+    }
+    .section {
+      width: 100%;
+      max-width: 700px;
+    }
+    .profile-card, .performance, .settings-content, .students-list, .create-test {
+      background-color: #FFFCFB;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin: auto;
+      border: 2px solid black;
+    }
+    .profile-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .profile-photo img {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid #FFC107;
+    }
+    .details-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .profile-details {
+      text-align: left;
+    }
+    .profile-details h2 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    .profile-details p {
+      margin: 4px 0;
+      font-size: 16px;
+      color: #555;
+    }
+    .settings-options a {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #007BFF;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .settings-section {
+      margin-top: 20px;
+    }
+    .settings-section label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    .settings-section input, .settings-section textarea, .settings-section select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .settings-section button {
+      background-color: #FFC107;
+      border: none;
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .settings-section button:hover {
+      background-color: #e0ac05;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #FFC107;
+    }
+    .student-card {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .test-form {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      flex: 1;
+    }
+    .mark-input {
+      width: 80px;
+      display: inline-block;
+      margin: 0 5px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+      .sidebar a {
+        padding: 14px;
+      }
+      .profile-card {
+        padding: 16px;
+      }
+      .profile-photo img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+    #logoutModal, #passwordModal, #feedbackModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      display: none;
+    }
+    .modal-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #333;
+    }
+    .modal-content p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .modal-buttons button {
+      background-color: #FFC107;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .modal-buttons button:hover {
+      background-color: #e0ac05;
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar">
+  <img src="{% static 'website/Zenithlogo.jpg' %}" alt="Logo" style="height: 30px; vertical-align: middle; margin-right: 10px;">
+  Zenith Tuition - 
+  {% if role == "student" %}
+    Student Portal
+  {% elif role == "tutor" %}
+    Tutor Portal
+  {% elif role == "parent" %}
+    Parent Portal
+  {% else %}
+    Portal
+  {% endif %}
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <a href="#" onclick="showSection('profile')">Profile</a>
+    {% if role == "tutor" %}
+      <a href="#" onclick="showSection('students')">Students</a>
+      <a href="#" onclick="showSection('createtest')">Create Test</a>
+    {% else %}
+      <a href="#" onclick="showSection('performance')">Performance</a>
+    {% endif %}
+    <a href="#" onclick="showSection('settings')">Settings</a>
+    <a href="javascript:void(0);" onclick="confirmLogout()">Logout</a>
+  </div>
+
+  <div class="main-content">
+    <!-- Profile Section -->
+    <div id="profile" class="section">
+      <div class="profile-card">
+        <div class="profile-photo">
+          {% if role == "student" %}
+            <img src="{% if student.StudentPhoto %}{{ student.StudentPhoto.url }}{% else %}{% static 'website/placeholder.jpg' %}{% endif %}" alt="Student Photo"/>
+          {% elif role == "tutor" %}
+            <img src="{% if tutor.TutorPhoto %}{{ tutor.TutorPhoto.url }}{% else %}{% static 'website/placeholder.jpg' %}{% endif %}" alt="Tutor Photo"/>
+          {% endif %}
+        </div>
+        <div class="details-wrapper">
+          <div class="profile-details">
+            {% if role == "student" %}
+              <p><strong>Name:</strong> {{ student.Name }}</p>
+              <p><strong>DOB:</strong> {{ student.DOB }}</p>
+              <p><strong>Age:</strong> {{ student.Age }}</p>
+              <p><strong>Gender:</strong> {{ student.Gender }}</p>
+              <p><strong>Class:</strong> {{ student.Class }}</p>
+              <p><strong>Course:</strong> {{ student.Group }}</p>
+              <p><strong>School Name:</strong> {{ student.SchoolName }}</p>
+              <p><strong>Email:</strong> {{ student.Email }}</p>
+              <p><strong>Phone Number:</strong> {{ student.PhoneNumber }}</p>
+            {% elif role == "tutor" %}
+              <p><strong>Name:</strong> {{ tutor.Name }}</p>
+              <p><strong>DOB:</strong> {{ tutor.DOB }}</p>
+              <p><strong>Age:</strong> {{ tutor.Age }}</p>
+              <p><strong>Gender:</strong> {{ tutor.Gender }}</p>
+              <p><strong>Assigned Class:</strong> {{ tutor.AssignedClass }}</p>
+              <p><strong>Subject:</strong> {{ tutor.Subject }}</p>
+              <p><strong>Qualification:</strong> {{ tutor.Qualification }}</p>
+              <p><strong>Email:</strong> {{ tutor.Email }}</p>
+              <p><strong>Phone Number:</strong> {{ tutor.PhoneNumber }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Section (Tutor Only) -->
+    {% if role == "tutor" %}
+    <div id="students" class="section" style="display: none;">
+      <div class="students-list">
+        <h2>Students in Class {{ tutor.AssignedClass }}</h2>
+        {% if students %}
+          {% for student_data in students %}
+          <div class="student-card">
+            <h4>{{ student_data.Name }}</h4>
+            <p><strong>Class:</strong> {{ student_data.Class }} | <strong>Group:</strong> {{ student_data.Group }}</p>
+            <p><strong>School:</strong> {{ student_data.SchoolName }}</p>
+            <p><strong>Email:</strong> {{ student_data.Email }} | <strong>Phone:</strong> {{ student_data.PhoneNumber }}</p>
+            
+            {% if student_data.tests %}
+              <h5>Test Results:</h5>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for test_name, subjects in student_data.tests.items %}
+                    {% for subject, mark in subjects.items %}
+                    <tr>
+                      <td>{{ test_name }}</td>
+                      <td>{{ subject }}</td>
+                      <td>{{ mark }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p><em>No test results available</em></p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>No students found in your assigned class.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Create Test Section (Tutor Only) -->
+    <div id="createtest" class="section" style="display: none;">
+      <div class="create-test">
+        <h2>Create New Test</h2>
+        <form method="post" action="{% url 'create_test' %}" onsubmit="return validateTestForm(event)">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label for="test_name">Test Name:</label>
+              <input type="text" id="test_name" name="test_name" required>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject:</label>
+              <input type="text" id="subject" name="subject" required>
+            </div>
+          </div>
+          
+          <h3>Enter Marks for Students</h3>
+          <div class="test-form">
+            {% for student_data in students %}
+            <div style="margin-bottom: 10px;">
+              <label>{{ student_data.Name }}:</label>
+              <input type="number" name="mark_{{ student_data.user.username }}" 
+                     class="mark-input" min="0" max="100" step="0.1" placeholder="0">
+            </div>
+            {% endfor %}
+          </div>
+          
+          <button type="submit">Create Test</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Performance Section (Student Only) -->
+    {% if role == "student" %}
+    <div id="performance" class="section" style="display: none;">
+      <div class="performance">
+        <h2>Test Results</h2>
+        {% if grouped_tests %}
+          {% for test_name, results in grouped_tests.items %}
+          <div style="margin-bottom: 20px;">
+            <h3>{{ test_name }}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for result in results %}
+                <tr>
+                  <td>{{ result.subject }}</td>
+                  <td>{{ result.mark }}</td>
+                  <td>{{ result.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>No test results available yet.</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Settings Section -->
+    <div id="settings" class="section" style="display: none;">
+      <div class="settings-content">
+        <h2>Settings</h2>
+        <div class="settings-options">
+          <a onclick="toggleSettings('change')">Change Password</a>
+          <a onclick="toggleSettings('feedback')">Feedback</a>
+        </div>
+        
+        <div id="change" class="settings-section" style="display: none;">
+          <form id="changePasswordForm" method="POST" onsubmit="return validatePasswordChange(event)">
+            {% csrf_token %}
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+            <button type="submit">Change Password</button>
+          </form>
+        </div>
+        
+        <div id="feedback" class="settings-section" style="display: none;">
+          <form id="feedbackForm" method="POST" onsubmit="return submitFeedback(event)">
+            {% csrf_token %}
+            <label for="feedbackText">Write your feedback:</label>
+            <textarea id="feedbackText" name="feedbackText" rows="4" placeholder="Your feedback..." required></textarea>
+            <button type="submit">Submit Feedback</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div id="logoutModal">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <h3>Logout Confirmation</h3>
+    <p>Are you sure you want to logout?</p>
+    <div class="modal-buttons">
+      <button onclick="logoutNow()">Yes</button>
+      <button onclick="closeLogoutModal()">No</button>
+    </div>
+  </div>
+</div>
+
+<div id="passwordModal" style="display: none;">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <h3>Password Change</h3>
+    <p>Your password has been successfully submitted.</p>
+    <div class="modal-buttons">
+      <button onclick="closePasswordModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="feedbackModal" style="display: none;">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <h3>Feedback Submitted</h3>
+    <p>Thank you for your valuable feedback!</p>
+    <div class="modal-buttons">
+      <button onclick="closeFeedbackModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function toggleSettings(option) {
+    document.getElementById('change').style.display = 'none';
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById(option).style.display = 'block';
+  }
+
+  function confirmLogout() {
+    document.getElementById("logoutModal").style.display = "block";
+  }
+
+  function closeLogoutModal() {
+    document.getElementById("logoutModal").style.display = "none";
+  }
+
+  function logoutNow() {
+    {% if role == "student" %}
+      window.location.href = "{% url 'student_logout' %}";
+    {% elif role == "tutor" %}
+      window.location.href = "{% url 'tutor_logout' %}";
+    {% endif %}
+  }
+
+  function validatePasswordChange(event) {
+    event.preventDefault();
+    const form = document.getElementById("changePasswordForm");
+    const current = form.currentPassword;
+    const newPass = form.newPassword;
+    const confirm = form.confirmPassword;
+    
+    confirm.setCustomValidity("");
+    
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return false;
+    }
+    
+    if (newPass.value.trim() !== confirm.value.trim()) {
+      confirm.setCustomValidity("Passwords do not match.");
+      confirm.reportValidity();
+      return false;
+    }
+    
+    fetch('{% url "change_password" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: new URLSearchParams(new FormData(form))
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showPasswordModal();
+        form.reset();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    })
+    .catch(error => {
+      alert('An error occurred. Please try again.');
+    });
+    
+    return false;
+  }
+
+  function submitFeedback(event) {
+    event.preventDefault();
+    const form = document.getElementById("feedbackForm");
+    
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return false;
+    }
+    
+    fetch('{% url "submit_feedback" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: new URLSearchParams(new FormData(form))
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showFeedbackModal();
+        form.reset();
+      } else {
+        alert('Error: ' + (data.error || 'Failed to submit feedback'));
+      }
+    })
+    .catch(error => {
+      alert('An error occurred. Please try again.');
+    });
+    
+    return false;
+  }
+
+  function validateTestForm(event) {
+    const testName = document.getElementById('test_name').value.trim();
+    const subject = document.getElementById('subject').value.trim();
+    
+    if (!testName || !subject) {
+      alert('Please fill in test name and subject.');
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  function showPasswordModal() {
+    document.getElementById("passwordModal").style.display = "block";
+  }
+
+  function closePasswordModal() {
+    document.getElementById("passwordModal").style.display = "none";
+  }
+
+  function showFeedbackModal() {
+    document.getElementById("feedbackModal").style.display = "block";
+  }
+
+  function closeFeedbackModal() {
+    document.getElementById("feedbackModal").style.display = "none";
+  }
+
+  window.onload = () => {
+    showSection('profile');
+  };
+</script>
+</body>
+</html>

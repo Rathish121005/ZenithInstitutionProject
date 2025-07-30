@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Test - Zenith Tuition</title>
+    <style>
+        /* Your existing CSS styles */
+        .test-form { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-control { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .marks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .student-marks { background: white; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .mark-input { width: 80px; margin-left: 10px; }
+        .btn { background: #FFC107; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #e0ac05; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create New Test</h2>
+        
+        <form method="post" id="testForm">
+            {% csrf_token %}
+            
+            <div class="test-form">
+                <div class="form-group">
+                    <label for="test_name">Test Name:</label>
+                    <input type="text" id="test_name" name="test_name" class="form-control" required 
+                           placeholder="e.g., Unit Test 1, Mid Term, Final Exam">
+                </div>
+                
+                <div class="form-group">
+                    <label for="subjects">Subjects (comma separated):</label>
+                    <input type="text" id="subjects" name="subjects" class="form-control" required 
+                           placeholder="e.g., Mathematics, Physics, Chemistry, Biology"
+                           onchange="generateMarkFields()">
+                </div>
+            </div>
+            
+            <div id="marksSection" style="display: none;">
+                <h3>Enter Marks for Students</h3>
+                <div id="marksContainer" class="marks-grid"></div>
+            </div>
+            
+            <button type="submit" class="btn" style="margin-top: 20px;">Create Test</button>
+            <a href="{% url 'tutor' %}" class="btn" style="background: #6c757d; margin-left: 10px;">Cancel</a>
+        </form>
+    </div>
+
+    <script>
+        const students = {{ students|safe }};
+        
+        function generateMarkFields() {
+            const subjectsInput = document.getElementById('subjects').value;
+            const marksSection = document.getElementById('marksSection');
+            const marksContainer = document.getElementById('marksContainer');
+            
+            if (!subjectsInput.trim()) {
+                marksSection.style.display = 'none';
+                return;
+            }
+            
+            const subjects = subjectsInput.split(',').map(s => s.trim()).filter(s => s);
+            
+            if (subjects.length === 0) {
+                marksSection.style.display = 'none';
+                return;
+            }
+            
+            marksContainer.innerHTML = '';
+            
+            const studentsData = [
+                {% for student in students %}
+                {
+                    username: '{{ student.user.username }}',
+                    name: '{{ student.Name }}'
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+            
+            studentsData.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.className = 'student-marks';
+                
+                let html = `<h4>${student.name}</h4>`;
+                
+                subjects.forEach(subject => {
+                    html += `
+                        <div style="margin-bottom: 10px;">
+                            <label>${subject}:</label>
+                            <input type="number" 
+                                   name="mark_${student.username}_${subject}" 
+                                   class="mark-input" 
+                                   min="0" max="100" step="0.1" 
+                                   placeholder="0">
+                        </div>
+                    `;
+                });
+                
+                studentDiv.innerHTML = html;
+                marksContainer.appendChild(studentDiv);
+            });
+            
+            marksSection.style.display = 'block';
+        }
+        
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            const testName = document.getElementById('test_name').value.trim();
+            const subjects = document.getElementById('subjects').value.trim();
+            
+            if (!testName || !subjects) {
+                alert('Please fill in test name and subjects.');
+                e.preventDefault();
+                return false;
+            }
+            
+            return true;
+        });
+    </script>
+</body>
+</html>

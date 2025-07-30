@@ -1,0 +1,242 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZenithBRAIN | Contact Us</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'website/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'website/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'website/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static 'website/site.webmanifest' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: url("{% static 'website/admissionbg.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
+      padding-top: 50px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .header-bar {
+      background: linear-gradient(90deg, #ffc107, #ffdd57);
+      padding: 15px 0;
+      text-align: center;
+      color: #2c3e50;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      border-bottom: 3px solid #f0ad4e;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 950px;
+      background-color: rgba(255, 255, 255, 0.97);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-size: 15px;
+      color: #333;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background-color: #ffc107;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ffdd57;
+    }
+
+    .contact-info {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .contact-info h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .contact-info p {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .footer {
+      background-color: gray;
+      color: white;
+      padding: 20px;
+      display: flex;
+      margin-top: 40px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 60px;
+      width: 100%;
+    }
+
+    .footer p {
+      margin: 0;
+    }
+
+    .success-message {
+      display: none;
+      margin-top: 20px;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      padding: 15px;
+      border-radius: 8px;
+      color: #155724;
+      font-weight: 500;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: slideFade 0.6s ease forwards;
+    }
+
+    @keyframes slideFade {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 25px 20px;
+      }
+
+      .header-bar {
+        font-size: 18px;
+      }
+
+    }
+    .alert {
+  padding: 10px;
+  margin-bottom: 15px;
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+}
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-bar">Contact Us</div>
+
+  <div class="container">
+    <h1>Get in Touch</h1>
+      {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+    <form id="contactForm" action="{% url 'contact' %}" method="post">
+        {% csrf_token %}
+      <div class="form-group">
+        <label for="name">Your Name <span style="color: red;">*</span></label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Your Email <span style="color: red;">*</span></label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number <span style="color: red;">*</span></label>
+        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" pattern="[6-9]{1}[0-9]{9}" maxlength="10" required>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message <span style="color: red;">*</span></label>
+        <textarea id="message" name="message" placeholder="Type your message here..." rows="5" required></textarea>
+      </div>
+
+      <button type="submit">Send Message</button>
+    </form>
+
+    
+
+    <div class="contact-info">
+      <h2>Other Ways to Reach Us</h2>
+      <p><strong>Email:</strong> <a href="mailto:zenithbraininstitution2022@gmail.com">zenithbraininstitution2022@gmail.com</a></p>
+      <p><strong>Phone:</strong> <a href="tel:9791795652">979179562</a></p>
+      <p><strong>Address:</strong> 1234, Education Lane, City, Country</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 Zenith Brain Institution — All rights reserved</p>
+  </div>
+
+  <script>
+    const contactForm = document.getElementById('contactForm');
+    const successBox = document.getElementById('successBox');
+
+    contactForm.addEventListener('submit', function (e) {
+
+      if (contactForm.checkValidity()) {
+        successBox.style.display = 'block';
+        contactForm.reset();
+        setTimeout(() => {
+          successBox.style.display = 'none';
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>

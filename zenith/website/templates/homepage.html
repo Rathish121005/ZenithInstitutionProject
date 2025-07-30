@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenith Brain Institution</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'website/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'website/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'website/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static 'website/site.webmanifest' %}">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      flex-wrap: nowrap;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      scroll-behavior: smooth;
+      color: #333;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #2f2f2f;
+      color: #FFC107;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 40px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-left img {
+      width: 50px;
+    }
+
+    .header-left h1 {
+      font-size: 1.8em;
+      margin: 0;
+      font-weight: 700;
+      color: #FFC107;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+
+    .header-buttons a {
+      background: transparent;
+      border: 2px solid #FFC107;
+      color: #FFC107;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1em;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .header-buttons a:hover {
+      background-color: #FFC107;
+      color: #2f2f2f;
+    }
+
+    main {
+      padding: 50px 30px;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    main h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    main p {
+      font-size: 1.2em;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .info-section {
+      text-align: left;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .info-section h3 {
+      color: #2f2f2f;
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+
+    .info-section p {
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    footer {
+      background-color: #1f1f1f;
+      color: #ccc;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9em;
+    }
+
+    /* Slide Down Contact Panel */
+    .popup-panel {
+      position: fixed;
+      top: -100%;
+      right: 20px;
+      width: 380px;
+      background: #2f2f2f;
+      color: white;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      z-index: 3000;
+      transition: top 0.4s ease-in-out;
+    }
+
+    .popup-panel.active {
+      top: 70px;
+    }
+
+    .popup-box {
+      padding: 25px 20px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .popup-box h2 {
+      margin-top: 0;
+      font-size: 1.4em;
+      color: #ffffff;
+    }
+
+    .popup-box p {
+      font-size: 1em;
+      line-height: 1.5;
+      margin: 10px 0;
+      color: #ffffff;
+    }
+
+    .popup-box a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+
+    .popup-box a:hover {
+      text-decoration: underline;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .popup-panel {
+        width: 100%;
+        right: 0;
+        border-radius: 0;
+      }
+
+      .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+    }
+ .info-section-wrapper {
+  background: linear-gradient(to right, #fff3cd, #fff8e1);
+  padding: 70px 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.info-box {
+  flex: 1 1 48%;
+  background-color: #ffffff;
+  border-left: 5px solid #ffc107;
+  border-radius: 12px;
+  padding: 30px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.info-box:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.info-box h3 {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.info-box p {
+  font-size: 1.07em;
+  color: #444;
+  line-height: 1.75;
+}
+
+@media (max-width: 768px) {
+  .info-row {
+    flex-direction: column;
+  }
+
+  .info-box {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+}
+  main {
+  padding: 60px 20px;
+  flex-grow: 1;
+  background: linear-gradient(to bottom right, #eaf7ff, #fefefa);
+  animation: fadeIn 0.8s ease-in;
+}
+
+main h2 {
+  font-size: 2.7em;
+  margin-bottom: 30px;
+  color: #2a2a2a;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 #cce7ff;
+}
+
+main p {
+  font-size: 1.15em;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+  color: #444;
+}
+
+.info-section-wrapper {
+  background: linear-gradient(to right, #f2fbff, #ffffff);
+  padding: 70px 20px;
+}
+
+.info-box {
+  flex: 1 1 48%;
+  background-color: #ffffff;
+  border-left: 5px solid #8bd6ff;
+  border-radius: 12px;
+  padding: 30px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.info-box:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h3 {
+  font-size: 1.5em;
+  color: #1e4a5c;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d3f3ff;
+}
+
+.info-box p {
+  font-size: 1.07em;
+  color: #333;
+  line-height: 1.75;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <img src="{% static 'website/Zenithlogo.jpg' %}" alt="Zenith Brain Institution Logo" />
+      <h1>Zenith Brain Institution</h1>
+    </div>
+    <div class="header-buttons">
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'admission' %}">Admission</a>
+
+      <a href="javascript:void(0);" onclick="openPopup()">Contact</a>
+    </div>
+  </header>
+<main>
+  <h2>Welcome to Zenith Brain Institution</h2>
+  <div class="info-section-wrapper">
+    <section class="info-row">
+      <div class="info-box">
+        <h3>Our Mission</h3>
+        <p>
+          Our mission at <strong>Zenith Brain Institution</strong> is to empower students with the knowledge, skills, and confidence
+          they need to excel academically and beyond. We believe in nurturing each student's unique potential and fostering
+          a lifelong love of learning.
+        </p>
+      </div>
+
+      <div class="info-box">
+        <h3>Our Philosophy</h3>
+        <p>
+          We employ a <strong>student-centric approach</strong>, focusing on individualized attention and adaptive teaching methods.
+          We don't just teach subjects; we teach <em>critical thinking, problem-solving,</em> and effective study habits,
+          ensuring every learner grows holistically.
+        </p>
+      </div>
+    </section>
+  </div>
+</main>
+
+
+
+  <footer>
+    &copy; 2025 Zenith Brain Institution. All rights reserved.
+  </footer>
+
+  <!-- Contact Panel -->
+  <div class="popup-panel" id="popup">
+    <div class="popup-box">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <h2>Contact Us</h2>
+      <p><strong>📧 Email:</strong> <a href="mailto:zenithbraininstitution2022@gmail.com">zenithbraininstitution2022@gmail.com</a></p>
+      <p><strong>📞 Phone:</strong> <a href="tel:+919791795652">9791795652</a>,<a href="tel:7092472885">7092472885</a></p>
+      <p><strong>📍 Address:</strong><br>
+        Zenith Brain Institution,<br>
+        123 Knowledge Park, Innovation City,<br>
+        Tamil Nadu - 600001, India<br>
+        <a href="https://www.google.com/maps?q=123+Knowledge+Park+Tamil+Nadu+600001" target="_blank">View on Google Maps</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function openPopup() {
+      document.getElementById("popup").classList.add("active");
+    }
+
+    function closePopup() {
+      document.getElementById("popup").classList.remove("active");
+    }
+
+    window.addEventListener('click', function (e) {
+      const popup = document.getElementById('popup');
+      const isButton = e.target.closest('a, button');
+      if (!popup.contains(e.target) && !isButton) {
+        closePopup();
+      }
+    });
+  </script>
+</body>
+</html>
